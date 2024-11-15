@@ -3,19 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open Site</title>
+    <title>Send POST Request</title>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const url = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/';
-            console.log('Opening URL:', url);
-
-            // Open the URL
-            window.open(url, '_blank'); // Opens the URL in a new tab
+            
+            // Create the POST request
+            fetch(url, {
+                method: 'POST',  // POST method
+                headers: {
+                    'Content-Type': 'application/json',  // Set the content type to JSON
+                },
+                body: JSON.stringify({ message: 'Hello from POST request!' }) // Example data
+            })
+            .then(response => response.json()) // If the response is JSON, parse it
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         });
     </script>
 </head>
 <body>
-    <h1>Open Site</h1>
-    <p>The site will open automatically.</p>
+    <h1>Send POST Request</h1>
+    <p>The POST request is sent automatically when the page loads.</p>
 </body>
 </html>
