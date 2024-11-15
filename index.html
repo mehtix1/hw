@@ -21,17 +21,15 @@
 
         // Send POST request immediately after the WebSocket is created
         sendPostToWebhook();
-        
-       
-        socket.onopen = function() {
-            
 
-        
-        socket.send("flag");
+        socket.addEventListener("open", (event) => {
+            socket.send("Hello Server!");
+        });
+
+        socket.close();    
+
         sendPostToWebhook();
-        };
 
-      
         function sendPostToWebhook() {
             console.log("Sending POST request to Webhook");
 
