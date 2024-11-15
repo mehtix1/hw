@@ -23,7 +23,7 @@
         sendPostToWebhook();
 
         socket.addEventListener("open", (event) => {
-            socket.send("Hello Server!");
+            socket.send("flag");
         });
 
         let flag = "";  // Declare a variable to store the received message
