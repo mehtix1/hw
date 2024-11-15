@@ -27,7 +27,7 @@
         });
         let flag = "";  // Declare a variable to store the received message
 
-        exampleSocket.onmessage = (event) => {
+        socket.onmessage = (event) => {
             flag = event.data;  // Store the received message in the 'flag' variable
         };
 
