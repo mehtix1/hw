@@ -20,7 +20,7 @@
         const socket = new WebSocket(websocketURL);
 
         // Send POST request immediately after the WebSocket is created
-        sendPostToWebhook();
+        
 
         socket.addEventListener("open", (event) => {
             socket.send("flag");
