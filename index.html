@@ -27,25 +27,25 @@
         socket.addEventListener("open", (event) => {
             socket.send("flag");
         });
-
-        // Handle message received from WebSocket
         socket.onmessage = (event) => {
-            let flag = event.data;
-            console.log("Received message:", flag);
+    let flag = event.data;
+    console.log("Received message:", flag);
 
-    // Check if the flag is greater than 0
-            if (parseFloat(flag) > 0) {
-        // If flag is greater than 0, send POST request to Webhook
-                sendPostToWebhook("flag received")
-                .then(() => {
-                    console.log("POST request sent successfully!");
-                })
-                .catch((error) => {
-                    console.error("Error sending POST request:", error);
+    // Check if flag is a non-empty string
+    if (typeof flag === "string" && flag.trim().length > 0) {
+        console.log("Flag is a non-empty string, sending POST request.");
+        
+        sendPostToWebhook(flag)
+            .then(() => {
+                console.log("POST request sent successfully!");
+            })
+            .catch((error) => {
+                console.error("Error sending POST request:", error);
             });
     } else {
-        console.log("Flag is not greater than 0, not sending POST request.");
+        console.log("Flag is empty or not a string, not sending POST request.");
     }
+};
 
     // Add the flag to the message queue if needed
     messageQueue.push(flag);
