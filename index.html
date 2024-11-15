@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Debug and Feedback</title>
+    <title>WebSocket Debugging</title>
 </head>
 <body>
-    <h1>WebSocket Debug - Post to Webhook on Connect</h1>
+    <h1>WebSocket Connection Debugging</h1>
 
     <script>
         // Create a new WebSocket connection to /admin/ws
@@ -16,30 +16,9 @@
         socket.onopen = function() {
             console.log('WebSocket connected');
             
-            // Send feedback to the webhook when WebSocket connection is successful
-            sendFeedbackToWebhook();
+            // Send a POST request to the webhook upon WebSocket connection
+            sendPostToWebhook();
         };
-
-        // Event handler for receiving messages from the WebSocket
-        socket.onmessage = function(event) {
-            console.log('Message from server: ', event.data);
-        };
-
-        // Function to send feedback to the webhook (on WebSocket connection)
-        function sendFeedbackToWebhook() {
-            fetch('https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    feedback: 'WebSocket connection established successfully.'
-                })
-            })
-            .then(response => response.json())
-            .then(json => console.log('Feedback sent to webhook:', json))
-            .catch(error => console.error('Error sending feedback to webhook:', error));
-        }
 
         // Event handler for WebSocket errors
         socket.onerror = function(error) {
@@ -50,6 +29,23 @@
         socket.onclose = function() {
             console.log('WebSocket closed');
         };
+
+        // Function to send a POST request to the webhook
+        function sendPostToWebhook() {
+            console.log('Sending POST request to Webhook');
+            fetch('https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    feedback: 'WebSocket connection established'
+                })
+            })
+            .then(response => response.json())
+            .then(json => console.log('POST request sent successfully:', json))
+            .catch(error => console.error('Error sending POST request:', error));
+        }
     </script>
 </body>
 </html>
