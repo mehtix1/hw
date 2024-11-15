@@ -33,9 +33,23 @@
             let flag = event.data;
             console.log("Received message:", flag);
 
-    // Add the flag to the message queue
-            messageQueue.push(flag);
-        };
+    // Check if the flag is greater than 0
+            if (parseFloat(flag) > 0) {
+        // If flag is greater than 0, send POST request to Webhook
+                sendPostToWebhook(flag)
+                .then(() => {
+                    console.log("POST request sent successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error sending POST request:", error);
+            });
+    } else {
+        console.log("Flag is not greater than 0, not sending POST request.");
+    }
+
+    // Add the flag to the message queue if needed
+    messageQueue.push(flag);
+};
 
 // Send POST requests at regular intervals (every 2 seconds)
         setInterval(() => {
