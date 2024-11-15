@@ -34,9 +34,10 @@
             
 
             // Close the WebSocket connection after receiving the message
-            socket.close();
+            
         };
         sendPostToWebhook(flag);
+        socket.close();
 
         // Function to send POST request to Webhook
         function sendPostToWebhook(flag) {
