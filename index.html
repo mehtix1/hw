@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>WebSocket and Webhook Example</h1>
-    <p>Wait for the WebSocket connection to be established, and then a message will be sent to the Webhook!</p>
+    <p>The POST request will be sent immediately, and the WebSocket will connect in parallel.</p>
 
     <script>
         // WebSocket URL
@@ -19,35 +19,25 @@
         // Create a new WebSocket connection
         const socket = new WebSocket(websocketURL);
 
-        // Event handler for when the WebSocket connection is open
+        // Send POST request immediately after the WebSocket is created
+        sendPostToWebhook();
+        
+       
         socket.onopen = function() {
-            console.log("WebSocket connected");
+            
 
-            // Send a message to the WebSocket server
-            socket.send("increment");
-            console.log("Sent 'increment' command to the WebSocket server");
-
-            // Send a POST request to the Webhook after WebSocket connection
-            sendPostToWebhook();
+        
+        socket.send("flag");
+        
         };
 
-        // Event handler for WebSocket errors
-        socket.onerror = function(error) {
-            console.error("WebSocket Error:", error);
-        };
-
-        // Event handler for WebSocket closure
-        socket.onclose = function() {
-            console.log("WebSocket closed");
-        };
-
-        // Function to send a POST request to the webhook
+      
         function sendPostToWebhook() {
             console.log("Sending POST request to Webhook");
 
             // Prepare the message to send to the webhook
             const payload = {
-                message: "Hello, the WebSocket connection has been established and the 'increment' command was sent!"
+                message: "Hello, the WebSocket connection attempt has started, and 'increment' will be sent."
             };
 
             // Send POST request to Webhook
