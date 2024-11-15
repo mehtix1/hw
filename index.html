@@ -25,7 +25,7 @@
         let flag = "";  // Declare a variable to store the received message
 
         socket.addEventListener("open", (event) => {
-            socket.send("Hello Server!");
+            socket.send("flag");
         });
 
         socket.onmessage = (event) => {
