@@ -27,12 +27,12 @@
         });
 
         // Handle message received from WebSocket
-        socket.onmessage = function(event) {
+       socket.onmessage = async (event) => {
             let flag = event.data;  // Store the received message in the 'flag' variable
             console.log("Received message:", flag);
 
-        // Now you can send the POST request or perform other actions
-            sendPostToWebhook(flag);
+    // Send the POST request (using await to handle async flow)
+            await sendPostToWebhook(flag);
         };
 
 
