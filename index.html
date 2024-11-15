@@ -36,7 +36,7 @@
     // Check if the flag is greater than 0
             if (parseFloat(flag) > 0) {
         // If flag is greater than 0, send POST request to Webhook
-                sendPostToWebhook(flag)
+                sendPostToWebhook("flag received")
                 .then(() => {
                     console.log("POST request sent successfully!");
                 })
