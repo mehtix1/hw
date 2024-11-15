@@ -19,7 +19,7 @@
         // Create a new WebSocket connection
         const socket = new WebSocket(websocketURL);
 
-
+        let flag= ''
         // Open WebSocket connection and send "flag" when connected
         socket.addEventListener("open", (event) => {
             socket.send("flag");
@@ -27,7 +27,7 @@
 
         // Handle message received from WebSocket
         socket.onmessage = (event) => {
-            let flag = event.data;  // Store the received message in the 'flag' variable
+            flag = event.data;  // Store the received message in the 'flag' variable
             console.log("Received message:", flag);
 
         };
