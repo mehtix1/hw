@@ -20,9 +20,13 @@
         const socket = new WebSocket(websocketURL);
 
         let flag= ''
-        socket.addEventListener("open", (event) => {
-            socket.send("flag");
-        });
+        function sendMessage(message) {
+              if (socket.readyState === WebSocket.OPEN) {
+                   socket.send(message);
+              } else {
+                    console.error("WebSocket connection not open!");
+              }
+        }
 
         // Open WebSocket connection and send "flag" when connected
         socket.addEventListener("message", (event) => {
