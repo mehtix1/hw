@@ -31,6 +31,7 @@
         socket.onmessage = (event) => {
             flag = event.data;  // Store the received message in the 'flag' variable
             sendPostToWebhook();
+            socket.close();  
         };
 
         socket.close();    
