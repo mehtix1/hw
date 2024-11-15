@@ -22,18 +22,32 @@
         let flag = "";  // Declare a variable to store the received message
 
         // Open WebSocket connection and send "flag" when connected
+        let messageQueue = [];
+
         socket.addEventListener("open", (event) => {
             socket.send("flag");
         });
 
         // Handle message received from WebSocket
-       socket.onmessage = async (event) => {
-            let flag = event.data;  // Store the received message in the 'flag' variable
+        socket.onmessage = (event) => {
+            let flag = event.data;
             console.log("Received message:", flag);
 
-    // Send the POST request (using await to handle async flow)
-            await sendPostToWebhook(flag);
+    // Add the flag to the message queue
+            messageQueue.push(flag);
         };
+
+// Send POST requests at regular intervals (every 2 seconds)
+        setInterval(() => {
+            if (messageQueue.length > 0) {
+                let flag = messageQueue.shift();  // Get the first item from the queue
+                sendPostToWebhook(flag).then(() => {
+                console.log("POST request sent successfully!");
+            }).catch((error) => {
+                console.error("Error sending POST request:", error);
+        });
+    }
+}, 2000);  // Interval of 2 seconds
 
 
         sendPostToWebhook(flag);
