@@ -22,13 +22,12 @@
         // Send POST request immediately after the WebSocket is created
         sendPostToWebhook();
 
+        socket.addEventListener("open", (event) => {
+            socket.send("Hello Server!");
+        });
         let flag = "";  // Declare a variable to store the received message
 
-        socket.addEventListener("open", (event) => {
-            socket.send("flag");
-        });
-
-        socket.onmessage = (event) => {
+        exampleSocket.onmessage = (event) => {
             flag = event.data;  // Store the received message in the 'flag' variable
         };
 
@@ -41,8 +40,7 @@
 
             // Prepare the message to send to the webhook
             const payload = {
-                message: "Hello, the WebSocket connection attempt has started, and 'increment' will be sent.",
-                flag: flag  // Add the flag to the payload
+                message: "Hello, the WebSocket connection attempt has started, and 'increment' will be sent."
             };
 
             // Send POST request to Webhook
