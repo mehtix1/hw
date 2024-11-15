@@ -33,15 +33,16 @@
             console.log("Received message:", flag);
 
             // Send the POST request after the WebSocket message is received
-            sendPostToWebhook();
+            
 
             // Close the WebSocket connection after the first message
             socket.close();
+            sendPostToWebhook();
         };
-          
+        sendPostToWebhook();  
         
 
-        socket.close();    
+        
 
         
 
