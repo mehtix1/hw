@@ -21,7 +21,7 @@
 
         // Open WebSocket connection and send "flag" when connected
         socket.onopen = function(e) {
-            socket.send("flag");
+            socket.send("increment");
         };
 
         socket.onmessage = function(event) {
