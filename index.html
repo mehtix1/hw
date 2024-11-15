@@ -49,7 +49,7 @@
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(flag)
+                 body: JSON.stringify({ message: flag }) 
             })
             .then(response => {
                 if (response.ok) {
