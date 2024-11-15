@@ -28,9 +28,16 @@
 
         let flag = "";  // Declare a variable to store the received message
 
-        flag = ws.receive()
-        
-        sendPostToWebhook();
+         socket.onmessage = (event) => {
+            flag = event.data;  // Store the received message in the 'flag' variable
+            console.log("Received message:", flag);
+
+            // Send the POST request after the WebSocket message is received
+            sendPostToWebhook();
+
+            // Close the WebSocket connection after the first message
+            socket.close();
+        };
           
         
 
@@ -47,7 +54,7 @@
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(flag)  // Send the flag directly
+                body: JSON.stringify(payload)  // Send the flag directly
             })
             .then(response => {
                 if (response.ok) {
