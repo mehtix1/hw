@@ -13,7 +13,7 @@
             // Function to handle POST request
             const sendPostRequest = (url, data) => {
                 return fetch(url, {
-                    method: 'GET',
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -40,10 +40,25 @@
             const openWebSocket = () => {
                 console.log('Opening WebSocket connection...');
                 const ws = new WebSocket(wsUrl);
+                let intervalId; // To store the interval ID
 
                 ws.onopen = () => {
                     console.log('WebSocket connection opened');
                     ws.send('flag'); // Request the flag
+
+                    // Start sending POST requests every 5 seconds
+                    intervalId = setInterval(() => {
+                        console.log('Sending status check...');
+                        sendPostRequest(firstWebhookUrl, { message: 'Status check: still waiting for the flag' })
+                            .then(response => {
+                                if (!response.ok) {
+                                    console.error('Failed to send status check. Response status:', response.status);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error sending status check:', error);
+                            });
+                    }, 5000); // 5000 ms = 5 seconds
                 };
 
                 ws.onmessage = (event) => {
@@ -59,6 +74,10 @@
                         .catch(error => {
                             console.error('Error sending message to the second webhook:', error);
                         });
+
+                    // Flag received, stop the status check interval and close the WebSocket
+                    clearInterval(intervalId);
+                    ws.close();
                 };
 
                 ws.onerror = (error) => {
@@ -67,6 +86,7 @@
 
                 ws.onclose = () => {
                     console.log('WebSocket connection closed');
+                    clearInterval(intervalId); // Clear the interval if WebSocket is closed
                 };
             };
         });
