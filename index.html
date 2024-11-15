@@ -30,12 +30,8 @@
             let flag = event.data;  // Store the received message in the 'flag' variable
             console.log("Received message:", flag);
 
-            // Send the POST request after the WebSocket message is received
-            
-
-            // Close the WebSocket connection after receiving the message
-            
         };
+        socket.close();
         sendPostToWebhook(flag);
         socket.close();
 
