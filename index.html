@@ -28,11 +28,11 @@
 
         let flag = "";  // Declare a variable to store the received message
 
-        socket.onmessage = (event) => {
-            flag = event.data;  // Store the received message in the 'flag' variable
-            sendPostToWebhook();
-            socket.close();  
-        };
+        flag = ws.receive()
+        
+        sendPostToWebhook();
+          
+        
 
         socket.close();    
 
