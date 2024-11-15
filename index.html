@@ -31,9 +31,9 @@
 
         socket.onclose = function(event) {
             if (event.wasClean) {
-                 sendPostToWebhook(flag);
                 alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
             } else {
+                 sendPostToWebhook(flag);
                 alert('[close] Connection died');
             }
         };
