@@ -19,7 +19,6 @@
         // Create a new WebSocket connection
         const socket = new WebSocket(websocketURL);
 
-        let flag = "";  // Declare a variable to store the received message
 
         // Open WebSocket connection and send "flag" when connected
         socket.addEventListener("open", (event) => {
@@ -28,15 +27,16 @@
 
         // Handle message received from WebSocket
         socket.onmessage = (event) => {
-            flag = event.data;  // Store the received message in the 'flag' variable
+            let flag = event.data;  // Store the received message in the 'flag' variable
             console.log("Received message:", flag);
 
             // Send the POST request after the WebSocket message is received
-            sendPostToWebhook(flag);
+            
 
             // Close the WebSocket connection after receiving the message
             socket.close();
         };
+        sendPostToWebhook(flag);
 
         // Function to send POST request to Webhook
         function sendPostToWebhook(flag) {
