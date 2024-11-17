@@ -10,7 +10,7 @@
   <p>Open the browser console to see WebSocket events.</p>
   
   <script>
-    let socket = new WebSocket("wss://127.0.0.1:8080/admin/ws");
+    let socket = new WebSocket("wss://web:8080/admin/ws");
 
     socket.onopen = function(e) {
       socket.send("flag");
